@@ -30,4 +30,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: nebasam/sqoop:latest
+          tags: nebasam/hadoop:latest 1
