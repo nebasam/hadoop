@@ -9,10 +9,10 @@ WORKDIR /
 
 
 # Download & uncompress Apache Sqoop v1.4.7.
-# RUN wget -qO- http://archive.apache.org/dist/sqoop/1.4.7/sqoop-1.4.7.bin__hadoop-2.6.0.tar.gz | tar xvz \ 
-#     && mv sqoop-1.4.7.bin__hadoop-2.6.0 sqoop
+RUN wget -qO- http://archive.apache.org/dist/sqoop/1.4.7/sqoop-1.4.7.bin__hadoop-2.6.0.tar.gz | tar xvz \ 
+    && mv sqoop-1.4.7.bin__hadoop-2.6.0 sqoop
 
-COPY sqoop-1.4.7.bin__hadoop-2.6.0.tar.gz /sqoop
+# COPY sqoop-1.4.7.bin__hadoop-2.6.0.tar.gz /sqoop
 
 # Set SQOOP_HOME.
 ENV SQOOP_HOME=/sqoop
@@ -21,15 +21,15 @@ ENV SQOOP_HOME=/sqoop
 ENV PATH=$PATH:${SQOOP_HOME}/bin
 
 # Download & decompress MySQL connector.
-# RUN wget -qO- http://ftp.ntu.edu.tw/MySQL/Downloads/Connector-J/mysql-connector-java-8.0.26.tar.gz | tar xvz \
-#     && mv mysql-connector-java-8.0.26/mysql-connector-java-8.0.26.jar $SQOOP_HOME/lib \
-#     && rm -rf mysql-connector-java-8.0.26
+RUN wget -qO- http://ftp.ntu.edu.tw/MySQL/Downloads/Connector-J/mysql-connector-java-8.0.26.tar.gz | tar xvz \
+    && mv mysql-connector-java-8.0.26/mysql-connector-java-8.0.26.jar $SQOOP_HOME/lib \
+    && rm -rf mysql-connector-java-8.0.26
 
-COPY jar/java-json-schema.jar $SQOOP_HOME/lib/
+COPY java-json-schema.jar $SQOOP_HOME/lib/
 
-COPY jar/mysql-connector-java-8.0.26.jar $SQOOP_HOME/lib/
+# COPY jar/mysql-connector-java-8.0.26.jar $SQOOP_HOME/lib/
 
-COPY jar/postgresql-42.3.6.jar $SQOOP_HOME/lib/
+COPY postgresql-42.3.6.jar $SQOOP_HOME/lib/
 
 # Download the commons lang.
 RUN wget https://repo1.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar \
