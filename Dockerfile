@@ -9,8 +9,10 @@ WORKDIR /
 
 
 # Download & uncompress Apache Sqoop v1.4.7.
-RUN wget -qO- http://archive.apache.org/dist/sqoop/1.4.7/sqoop-1.4.7.bin__hadoop-2.6.0.tar.gz | tar xvz \ 
-    && mv sqoop-1.4.7.bin__hadoop-2.6.0 sqoop
+# RUN wget -qO- http://archive.apache.org/dist/sqoop/1.4.7/sqoop-1.4.7.bin__hadoop-2.6.0.tar.gz | tar xvz \ 
+#     && mv sqoop-1.4.7.bin__hadoop-2.6.0 sqoop
+
+COPY sqoop-1.4.7.bin__hadoop-2.6.0.tar.gz /sqoop
 
 # Set SQOOP_HOME.
 ENV SQOOP_HOME=/sqoop
