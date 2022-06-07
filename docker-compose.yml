@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  hadoop:
+    image: nebasam/hadoop
+    container_name: ra_hadoop
+    restart: always
+    ports:
+      - 9870:9870
+      - 9010:9000
+    volumes:
+      - hadoop:/hadoop/dfs/name
+volumes:
+  hadoop:
+  db:
+    driver: local

@@ -1,56 +1,49 @@
-# Ubuntu as the base image
-FROM ubuntu:20.04
+# Use Hadoop as the base image.
+# Since Sqoop requires Hadoop to be running in the background.
+FROM nebasam/hadoop
 
-# Set working directory to /
+# Set working directory to / (home).
 WORKDIR /
 
-# Install required dependencies
-RUN apt-get update && apt-get install --yes --no-install-recommends \ 
-    openjdk-8-jdk \
-    openssh-server \
-    openssh-client \
+# Install required dependencies & remove apt cache.
+RUN apt-get update && apt-get install -y \
+    unzip \
+    mysql-server \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
-# Generate SSH key pair for password less login
-RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa \
-    && cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys \
-    && chmod 0600 ~/.ssh/authorized_keys
+# Download & uncompress Apache Sqoop v1.4.7.
+RUN wget -qO- http://archive.apache.org/dist/sqoop/1.4.7/sqoop-1.4.7.bin__hadoop-2.6.0.tar.gz | tar xvz \ 
+    && mv sqoop-1.4.7.bin__hadoop-2.6.0 sqoop
 
-# Download Hadoop 3.3.1
-RUN wget -qO- https://mirrors.estointernet.in/apache/hadoop/common/hadoop-3.3.1/hadoop-3.3.1.tar.gz | tar xvz \
-    && apt-get remove --yes wget \
-    && apt-get autoremove --yes
+# Set SQOOP_HOME.
+ENV SQOOP_HOME=/sqoop
 
-# Set HADOOP_HOME variable
-ENV HADOOP_HOME=/hadoop-3.3.1
+# Update PATH with Sqoop's bin.
+ENV PATH=$PATH:${SQOOP_HOME}/bin
 
-# Other Hadoop variables
-ENV HADOOP_INSTALL=${HADOOP_HOME} \
-    HADOOP_MAPRED_HOME=${HADOOP_HOME} \
-    HADOOP_COMMON_HOME=${HADOOP_HOME} \
-    HADOOP_HDFS_HOME=${HADOOP_HOME} \
-    YARN_HOME=${HADOOP_HOME} \
-    HADOOP_COMMON_LIB_NATIVE_DIR=${HADOOP_HOME}/lib/native \
-    PATH=$PATH:${HADOOP_HOME}/sbin:${HADOOP_HOME}/bin \
-    HADOOP_OPTS="-Djava.library.path=${HADOOP_HOME}/lib/nativ" \
-    # Java home
-    JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/ \
-    # For staring Hadoop services using `start-all.sh`
-    HDFS_NAMENODE_USER="root" \
-    HDFS_DATANODE_USER="root" \
-    HDFS_SECONDARYNAMENODE_USER="root" \
-    YARN_RESOURCEMANAGER_USER="root" \
-    YARN_NODEMANAGER_USER="root"
+# Download & decompress MySQL connector.
+RUN wget -qO- http://ftp.ntu.edu.tw/MySQL/Downloads/Connector-J/mysql-connector-java-8.0.26.tar.gz | tar xvz \
+    && mv mysql-connector-java-8.0.26/mysql-connector-java-8.0.26.jar $SQOOP_HOME/lib \
+    && rm -rf mysql-connector-java-8.0.26
 
-# Dump environment variables since connecting 
-# to localhost via SSH wipes them out
-RUN env | grep _ >> /etc/environment
+# Copy jar files
+COPY /jar/* $SQOOP_HOME/lib
 
-# Copy Hadoop configuration files to the "etc" directory
-COPY /config/* ${HADOOP_HOME}/config/hadoop/
+# Download the commons lang.
+RUN wget https://repo1.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar \
+    && mv commons-lang-2.6.jar $SQOOP_HOME/lib
 
-# Copy bootstrap.sh
-COPY ./bootstrap.sh /
 
-CMD [ "bash", "./bootstrap.sh" ]
+# Rename sqoop-env-template.sh → sqoop-env.sh.
+RUN mv $SQOOP_HOME/conf/sqoop-env-template.sh $SQOOP_HOME/conf/sqoop-env.sh
+
+# Edit Hadoop variables in "sqoop-env.sh".
+RUN echo "export HADOOP_COMMON_HOME=/hadoop-3.3.1" >> $SQOOP_HOME/conf/sqoop-env.sh \
+    && echo "export HADOOP_MAPRED_HOME=/hadoop-3.3.1" >> $SQOOP_HOME/conf/sqoop-env.sh
+
+# Copy required files to the image.
+COPY init.sh /
+
+
+CMD [ "bash", "./init.sh" ]
