@@ -19,9 +19,9 @@ ENV SQOOP_HOME=/sqoop
 ENV PATH=$PATH:${SQOOP_HOME}/bin
 
 # Download & decompress MySQL connector.
-RUN wget -qO- http://ftp.ntu.edu.tw/MySQL/Downloads/Connector-J/mysql-connector-java-8.0.26.tar.gz | tar xvz \
-    && mv mysql-connector-java-8.0.26/mysql-connector-java-8.0.26.jar $SQOOP_HOME/lib \
-    && rm -rf mysql-connector-java-8.0.26
+# RUN wget -qO- http://ftp.ntu.edu.tw/MySQL/Downloads/Connector-J/mysql-connector-java-8.0.26.tar.gz | tar xvz \
+#     && mv mysql-connector-java-8.0.26/mysql-connector-java-8.0.26.jar $SQOOP_HOME/lib \
+#     && rm -rf mysql-connector-java-8.0.26
 
 COPY ./jar/* $SQOOP_HOME/lib/
 
