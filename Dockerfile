@@ -25,7 +25,11 @@ ENV PATH=$PATH:${SQOOP_HOME}/bin
 #     && mv mysql-connector-java-8.0.26/mysql-connector-java-8.0.26.jar $SQOOP_HOME/lib \
 #     && rm -rf mysql-connector-java-8.0.26
 
-COPY /jar/* $SQOOP_HOME/lib/
+COPY jar/java-json-schema.jar $SQOOP_HOME/lib/
+
+COPY jar/mysql-connector-java-8.0.26.jar $SQOOP_HOME/lib/
+
+COPY jar/postgresql-42.3.6.jar $SQOOP_HOME/lib/
 
 # Download the commons lang.
 RUN wget https://repo1.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar \
