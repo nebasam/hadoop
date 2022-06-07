@@ -1,9 +1,6 @@
 # Ubuntu as the base image
 FROM ubuntu:20.04
 
-LABEL author="D. Kasi Pavan Kumar <devdkpk@gmail.com>"
-LABEL version="1.0.2"
-
 # Set working directory to /
 WORKDIR /
 
@@ -51,7 +48,7 @@ ENV HADOOP_INSTALL=${HADOOP_HOME} \
 RUN env | grep _ >> /etc/environment
 
 # Copy Hadoop configuration files to the "etc" directory
-COPY /etc/* ${HADOOP_HOME}/etc/hadoop/
+COPY /config/* ${HADOOP_HOME}/config/hadoop/
 
 # Copy bootstrap.sh
 COPY ./bootstrap.sh /
