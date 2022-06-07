@@ -2,7 +2,7 @@ version: "3"
 
 services:
   hadoop:
-    image:  ghcr.io/kasipavankumar/hadoop-docker:1.0.3
+    image: ghcr.io/kasipavankumar/hadoop-docker:1.0.3
     container_name: hadoop
     restart: always
     ports:
@@ -31,7 +31,7 @@ services:
     container_name: postgres
   
   sqoop:
-    image: nebasam/sqoop:1
+    image: nebasam/sqoop:1.1
     container_name: sqoop
     depends_on:
       - hadoop
